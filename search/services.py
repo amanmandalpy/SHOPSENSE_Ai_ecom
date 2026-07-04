@@ -45,7 +45,8 @@ def execute_search(query_string, filters=None, sort_by=None):
             Q(sku__icontains=query_string) |
             Q(tags__name__icontains=query_string) |
             Q(short_description__icontains=query_string) |
-            Q(merchant_listings__store__name__icontains=query_string)
+            Q(merchant_listings__merchant_sku__icontains=query_string) |
+            Q(merchant_listings__merchant__name__icontains=query_string)
         ).distinct()
         
     # Filtering logic
@@ -59,21 +60,21 @@ def execute_search(query_string, filters=None, sort_by=None):
         qs = qs.filter(merchant_listings__store__slug=filters['store']).distinct()
         
     if 'min_price' in filters and filters['min_price']:
-        qs = qs.filter(merchant_listings__current_price__gte=filters['min_price']).distinct()
+        qs = qs.filter(merchant_listings__merchant_price__gte=filters['min_price']).distinct()
         
     if 'max_price' in filters and filters['max_price']:
-        qs = qs.filter(merchant_listings__current_price__lte=filters['max_price']).distinct()
+        qs = qs.filter(merchant_listings__merchant_price__lte=filters['max_price']).distinct()
         
     # Optimizations
     qs = qs.select_related('brand', 'category')
-    qs = qs.prefetch_related('merchant_listings', 'merchant_listings__store', 'gallery_images')
+    qs = qs.prefetch_related('merchant_listings', 'merchant_listings__merchant', 'gallery_images')
     
     # Sorting logic
     if sort_by:
         if sort_by == 'lowest_price':
-            qs = qs.annotate(min_price=Min('merchant_listings__current_price')).order_by('min_price')
+            qs = qs.annotate(min_price=Min('merchant_listings__merchant_price')).order_by('min_price')
         elif sort_by == 'highest_price':
-            qs = qs.annotate(max_price=Max('merchant_listings__current_price')).order_by('-max_price')
+            qs = qs.annotate(max_price=Max('merchant_listings__merchant_price')).order_by('-max_price')
         elif sort_by == 'highest_discount':
             qs = qs.annotate(max_discount=Max('merchant_listings__discount_percentage')).order_by('-max_discount')
         elif sort_by == 'newest':

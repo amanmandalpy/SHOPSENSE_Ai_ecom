@@ -1,42 +1,50 @@
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
-from .models import AffiliateConfig, AffiliateClick
-
-class DeepLinkService:
-    @staticmethod
-    def generate_affiliate_url(merchant_product):
-        base_url = merchant_product.merchant_product_url
-        try:
-            config = AffiliateConfig.objects.get(store=merchant_product.store, is_active=True)
-            
-            # Parse existing URL
-            url_parts = list(urlparse(base_url))
-            query = dict(parse_qs(url_parts[4]))
-            
-            # Inject tracking parameter
-            query.update({config.tracking_param_name: config.affiliate_id})
-            url_parts[4] = urlencode(query, doseq=True)
-            
-            return urlunparse(url_parts)
-            
-        except AffiliateConfig.DoesNotExist:
-            return base_url
+from urllib.parse import urlencode, urlparse, parse_qs
+from affiliate.models import AffiliateAccount
+from tracking.models import AffiliateClick
 
 class AffiliateService:
     @staticmethod
-    def log_click(request, merchant_product, outbound_url):
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
+    def generate_affiliate_link(merchant_product, user=None, request=None):
+        try:
+            account = AffiliateAccount.objects.get(merchant=merchant_product.merchant, commission_status='ACTIVE')
             
-        device = request.META.get('HTTP_USER_AGENT', '')[:200]
-        
-        AffiliateClick.objects.create(
-            user=request.user if request.user.is_authenticated else None,
-            merchant_product=merchant_product,
-            outbound_url=outbound_url,
-            ip_address=ip,
-            device=device,
-            browser=device
-        )
+            # Base URL is either deep link base or the merchant product URL
+            base_url = account.deep_link_base_url if account.deep_link_base_url else merchant_product.merchant_product_url
+            
+            # Tracking params
+            params = account.tracking_parameters.copy()
+            if account.tracking_id:
+                params['tracking_id'] = account.tracking_id
+                
+            if params:
+                query_string = urlencode(params)
+                if '?' in base_url:
+                    final_url = f"{base_url}&{query_string}"
+                else:
+                    final_url = f"{base_url}?{query_string}"
+            else:
+                final_url = base_url
+                
+            # Log click
+            ip_address = ''
+            user_agent = ''
+            if request:
+                ip_address = request.META.get('REMOTE_ADDR', '')
+                user_agent = request.META.get('HTTP_USER_AGENT', '')
+                
+            AffiliateClick.objects.create(
+                user=user,
+                merchant=merchant_product.merchant,
+                product=merchant_product.product,
+                merchant_product=merchant_product,
+                affiliate_url=final_url,
+                original_merchant_url=merchant_product.merchant_product_url,
+                ip_address=ip_address,
+                browser=user_agent[:200]
+            )
+            
+            return final_url
+            
+        except AffiliateAccount.DoesNotExist:
+            # Fallback to direct merchant URL
+            return merchant_product.merchant_product_url

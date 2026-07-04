@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import AffiliateRedirectView
+from .views import OutboundRedirectView
+
+app_name = 'affiliate'
 
 urlpatterns = [
-    path('<int:listing_id>/', AffiliateRedirectView.as_view(), name='affiliate_redirect'),
+    path('<int:pk>/', OutboundRedirectView.as_view(), name='outbound_redirect'),
 ]

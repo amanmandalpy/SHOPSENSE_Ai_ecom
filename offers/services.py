@@ -11,7 +11,7 @@ def calculate_best_savings(merchant_listing):
     store = merchant_listing.store
     
     # 1. Evaluate Best Coupon
-    coupons = Coupon.objects.filter(store=store)
+    coupons = Coupon.objects.filter(merchant=store)
     best_coupon = None
     max_coupon_saving = Decimal('0.00')
     
@@ -34,7 +34,7 @@ def calculate_best_savings(merchant_listing):
     
     # 2. Evaluate Best Bank Offer
     # Bank Offers can be specific to Store or global (store is null)
-    bank_offers = BankOffer.objects.filter(store=store) | BankOffer.objects.filter(store__isnull=True)
+    bank_offers = BankOffer.objects.filter(merchant=store) | BankOffer.objects.filter(merchant__isnull=True)
     best_bank_offer = None
     max_bank_saving = Decimal('0.00')
     

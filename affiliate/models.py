@@ -1,29 +1,52 @@
 from django.db import models
-from django.conf import settings
-from stores.models import Store
-from merchant_products.models import MerchantProduct
 
-class AffiliateConfig(models.Model):
-    store = models.OneToOneField(Store, on_delete=models.CASCADE, related_name='affiliate_config')
-    affiliate_id = models.CharField(max_length=100, help_text="e.g. shopsense-20")
-    tracking_param_name = models.CharField(max_length=50, default="tag", help_text="e.g. tag or aff_id")
-    is_active = models.BooleanField(default=True)
+class Merchant(models.Model):
+    STATUS_CHOICES = [
+        ('ACTIVE', 'Active'),
+        ('INACTIVE', 'Inactive'),
+        ('MAINTENANCE', 'Maintenance')
+    ]
     
-    def __str__(self):
-        return f"{self.store.name} Affiliate Config"
-
-class AffiliateClick(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-    merchant_product = models.ForeignKey(MerchantProduct, on_delete=models.SET_NULL, null=True)
-    outbound_url = models.TextField()
-    click_time = models.DateTimeField(auto_now_add=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
-    device = models.CharField(max_length=200, blank=True)
-    browser = models.CharField(max_length=200, blank=True)
-    country = models.CharField(max_length=50, blank=True)
+    name = models.CharField(max_length=100, unique=True)
+    logo = models.ImageField(upload_to='merchants/', blank=True, null=True)
+    website = models.URLField(max_length=200)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ACTIVE')
+    
+    # Capabilities
+    affiliate_supported = models.BooleanField(default=True)
+    official_api_supported = models.BooleanField(default=False)
+    feed_supported = models.BooleanField(default=False)
+    
+    # Metadata
+    currency = models.CharField(max_length=10, default='INR')
+    country = models.CharField(max_length=10, default='IN')
+    timezone = models.CharField(max_length=50, default='Asia/Kolkata')
+    priority = models.IntegerField(default=0, help_text="Higher priority gets synced/searched first")
+    
+    # Sync Status
+    last_sync = models.DateTimeField(null=True, blank=True)
+    sync_status = models.CharField(max_length=50, blank=True)
 
     class Meta:
-        ordering = ['-click_time']
+        ordering = ['-priority', 'name']
 
     def __str__(self):
-        return f"Click to {self.merchant_product} at {self.click_time}"
+        return self.name
+
+class AffiliateAccount(models.Model):
+    merchant = models.OneToOneField(Merchant, on_delete=models.CASCADE, related_name='affiliate_account')
+    affiliate_id = models.CharField(max_length=100)
+    tracking_id = models.CharField(max_length=100, blank=True)
+    tracking_parameters = models.JSONField(default=dict, blank=True, help_text="e.g. {'tag': 'shopsense-20'}")
+    deep_link_base_url = models.URLField(max_length=500, blank=True)
+    
+    COMMISSION_STATUS = [
+        ('ACTIVE', 'Active'),
+        ('PENDING', 'Pending'),
+        ('SUSPENDED', 'Suspended')
+    ]
+    commission_status = models.CharField(max_length=20, choices=COMMISSION_STATUS, default='ACTIVE')
+    merchant_notes = models.TextField(blank=True, help_text="TOS notes or commission rates")
+
+    def __str__(self):
+        return f"{self.merchant.name} Affiliate Account"

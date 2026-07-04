@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from stores.models import Store
+from affiliate.models import Merchant
 
 class DiscountType(models.TextChoices):
     FLAT = 'FLAT', 'Flat Discount'
@@ -15,7 +15,7 @@ class Coupon(models.Model):
     code = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='coupons')
+    merchant = models.ForeignKey(Merchant, on_delete=models.CASCADE, related_name='coupons', null=True, blank=True)
     
     discount_type = models.CharField(max_length=20, choices=DiscountType.choices)
     discount_value = models.DecimalField(max_digits=10, decimal_places=2)

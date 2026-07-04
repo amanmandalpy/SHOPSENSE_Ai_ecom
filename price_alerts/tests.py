@@ -2,7 +2,7 @@ from django.test import TestCase, override_settings
 from decimal import Decimal
 from accounts.models import User
 from products.models import Product
-from stores.models import Store
+from affiliate.models import Merchant
 from brands.models import Brand
 from categories.models import Category
 from merchant_products.models import MerchantProduct, StockStatus
@@ -15,17 +15,17 @@ from django.core.exceptions import ValidationError
 class PriceAlertTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='alertuser', email='alert@test.com', password='password123')
-        self.brand = Brand.objects.create(name='Apple', slug='apple')
-        self.category = Category.objects.create(name='Tech', slug='tech')
+        self.brand = Brand.objects.create(name='Apple')
+        self.category = Category.objects.create(name='Tech')
         self.product = Product.objects.create(name='MacBook Air', brand=self.brand, category=self.category, sku='MAC-AIR', status='ACTIVE')
-        self.store = Store.objects.create(name='Apple Store', slug='apple-store')
+        self.merchant = Merchant.objects.create(name='Apple Store')
         
         self.listing = MerchantProduct.objects.create(
             product=self.product,
-            store=self.store,
+            merchant=self.merchant,
             merchant_product_url='https://apple.com/macbook',
-            current_price=Decimal('999.00'),
-            availability_status=StockStatus.IN_STOCK
+            merchant_price=Decimal('999.00'),
+            stock=StockStatus.IN_STOCK
         )
 
     def test_duplicate_active_alert_prevention(self):
@@ -53,7 +53,7 @@ class PriceAlertTestCase(TestCase):
         self.assertEqual(Notification.objects.count(), 0)
         
         # Simulate price drop to exactly target
-        self.listing.current_price = Decimal('899.00')
+        self.listing.merchant_price = Decimal('899.00')
         self.listing.save()
         
         process_active_price_alerts.delay()

@@ -1,58 +1,77 @@
-# AWS Deployment Guide
+# ShopSense AI - Deployment Guide
 
-ShopSense AI is designed to run on a standard AWS stack: EC2 (App/Celery), RDS (PostgreSQL), ElastiCache (Redis), and S3 (Media/Static).
+This guide outlines the steps required to deploy ShopSense AI Version 1.0 to an AWS Ubuntu environment.
 
-## 1. Infrastructure Provisioning
-1. **RDS:** Spin up a PostgreSQL 15 instance. Keep it in a private subnet.
-2. **ElastiCache:** Spin up a Redis node.
-3. **S3:** Create an S3 bucket (e.g., `shopsense-assets-prod`). Disable "Block all public access" and attach an IAM policy for your EC2 instance profile.
-4. **EC2:** Launch an Ubuntu 22.04 LTS instance.
+## 1. Prerequisites
+- **AWS EC2 Instance**: Ubuntu 24.04 LTS recommended.
+- **PostgreSQL Database**: Amazon RDS or local PostgreSQL.
+- **Redis**: Amazon ElastiCache or local Redis server.
+- **AWS S3 Bucket**: For media and static files.
 
-## 2. Server Configuration (EC2)
-SSH into your instance and install dependencies:
+## 2. Server Setup
+
 ```bash
 sudo apt update
-sudo apt install python3.11-venv postgresql-client nginx supervisor redis-server
+sudo apt upgrade -y
+sudo apt install python3-pip python3-venv python3-dev libpq-dev postgresql postgresql-contrib nginx curl redis-server supervisor -y
 ```
 
-Clone the repository to `/var/www/shopsense`.
+## 3. Clone and Setup Environment
 
-## 3. Environment Variables
-Create `/var/www/shopsense/.env`:
-```
-DJANGO_SETTINGS_MODULE=shopsense.settings.prod
-SECRET_KEY=your_secure_random_string
-ALLOWED_HOSTS=shopsense.ai,www.shopsense.ai
-DB_NAME=shopsense
-DB_USER=postgres
-DB_PASSWORD=your_password
-DB_HOST=your-rds-endpoint.amazonaws.com
-REDIS_URL=redis://your-elasticache-endpoint:6379/1
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-AWS_STORAGE_BUCKET_NAME=shopsense-assets-prod
-GROQ_API_KEY=...
-```
-
-## 4. Run Migrations & Collect Static
 ```bash
-cd /var/www/shopsense
-python -m venv .venv
+git clone https://github.com/yourrepo/shopsense-ai.git
+cd shopsense-ai
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python manage.py migrate
-python manage.py collectstatic --noinput
 ```
 
-## 5. Supervisor (Gunicorn & Celery)
-Link the provided Gunicorn config to supervisor, or run it directly:
-`gunicorn shopsense.wsgi:application -c infrastructure/gunicorn_config.py`
+## 4. Environment Variables
+Copy the example environment file and update with production credentials.
+```bash
+cp deploy/.env.example .env
+```
 
-Start Celery:
-`celery -A shopsense worker -l INFO`
+## 5. Database & Static Files
+```bash
+export DJANGO_SETTINGS_MODULE="shopsense.settings.prod"
+python manage.py migrate
+python manage.py collectstatic
+python manage.py createsuperuser
+```
 
-## 6. Nginx & SSL
-Copy `infrastructure/nginx.conf` to `/etc/nginx/sites-available/shopsense`.
-Symlink it to `sites-enabled`.
-Run Certbot:
-`sudo certbot --nginx -d shopsense.ai -d www.shopsense.ai`
+## 6. Configure Services
+
+### Gunicorn
+Copy the systemd service file:
+```bash
+sudo cp deploy/gunicorn/gunicorn.service /etc/systemd/system/
+sudo systemctl start gunicorn
+sudo systemctl enable gunicorn
+```
+
+### Nginx
+Configure the reverse proxy:
+```bash
+sudo cp deploy/nginx/shopsense.conf /etc/nginx/sites-available/
+sudo ln -s /etc/nginx/sites-available/shopsense.conf /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+### Supervisor (Celery)
+Set up the Celery background worker:
+```bash
+sudo cp deploy/supervisor/celery.conf /etc/supervisor/conf.d/
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start celery
+```
+
+## 7. Security (Let's Encrypt SSL)
+```bash
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d shopsense.com -d www.shopsense.com
+```
+
+Your application is now deployed and running on `https://shopsense.com`.

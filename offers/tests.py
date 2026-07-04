@@ -5,7 +5,7 @@ from datetime import timedelta
 from products.models import Product
 from brands.models import Brand
 from categories.models import Category
-from stores.models import Store
+from affiliate.models import Merchant
 from merchant_products.models import MerchantProduct, StockStatus
 from coupons.models import Coupon, DiscountType as CouponDiscountType, CouponStatus
 from offers.models import BankOffer, DiscountType as OfferDiscountType, OfferType
@@ -13,17 +13,17 @@ from offers.services import calculate_best_savings
 
 class SavingsEngineTestCase(TestCase):
     def setUp(self):
-        self.brand = Brand.objects.create(name='Apple', slug='apple')
-        self.cat = Category.objects.create(name='Electronics', slug='electronics')
-        self.store = Store.objects.create(name='iStore', slug='istore')
+        self.brand = Brand.objects.create(name='Apple')
+        self.cat = Category.objects.create(name='Electronics')
+        self.merchant = Merchant.objects.create(name='iStore')
         
         self.product = Product.objects.create(name='iPhone 15', brand=self.brand, category=self.cat, sku='IP15', status='ACTIVE')
         
         self.listing = MerchantProduct.objects.create(
             product=self.product,
-            store=self.store,
-            current_price=Decimal('1000.00'),
-            availability_status=StockStatus.IN_STOCK
+            merchant=self.merchant,
+            merchant_price=Decimal('1000.00'),
+            stock=StockStatus.IN_STOCK
         )
 
     def test_flat_coupon_and_percentage_bank_offer(self):
@@ -31,7 +31,7 @@ class SavingsEngineTestCase(TestCase):
         Coupon.objects.create(
             code='SAVE50',
             name='Flat 50 Off',
-            store=self.store,
+            merchant=self.merchant,
             discount_type=CouponDiscountType.FLAT,
             discount_value=Decimal('50.00'),
             valid_until=timezone.now() + timedelta(days=5),
@@ -42,7 +42,7 @@ class SavingsEngineTestCase(TestCase):
         BankOffer.objects.create(
             name='HDFC 10% Off',
             bank_name='HDFC',
-            store=self.store,
+            merchant=self.merchant,
             offer_type=OfferType.BANK_DISCOUNT,
             discount_type=OfferDiscountType.PERCENTAGE,
             discount_value=Decimal('10.00'),
@@ -68,7 +68,7 @@ class SavingsEngineTestCase(TestCase):
         Coupon.objects.create(
             code='SAVE200',
             name='Flat 200 Off',
-            store=self.store,
+            merchant=self.merchant,
             discount_type=CouponDiscountType.FLAT,
             discount_value=Decimal('200.00'),
             valid_until=timezone.now() - timedelta(days=5),

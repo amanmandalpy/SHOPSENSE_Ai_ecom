@@ -1,0 +1,17 @@
+[Unit]
+Description=gunicorn daemon for ShopSense AI
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/SHOPSENSE_Ai_ecommerce
+ExecStart=/home/ubuntu/SHOPSENSE_Ai_ecommerce/.venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          shopsense.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

@@ -12,7 +12,7 @@ def record_price_change(merchant_product):
     if last_record:
         if (last_record.price == merchant_product.current_price and
             last_record.original_price == merchant_product.original_price and
-            last_record.availability_status == merchant_product.availability_status and
+            last_record.availability_status == merchant_product.stock and
             last_record.delivery_charge_snapshot == merchant_product.delivery_charge):
             return last_record # Nothing changed, avoid duplicate writes
 
@@ -21,11 +21,11 @@ def record_price_change(merchant_product):
         merchant_product=merchant_product,
         price=merchant_product.current_price,
         original_price=merchant_product.original_price,
-        currency=merchant_product.currency,
-        availability_status=merchant_product.availability_status,
-        seller_rating_snapshot=merchant_product.seller_rating,
+        currency=merchant_product.merchant.currency,
+        availability_status=merchant_product.stock,
+        seller_rating_snapshot=merchant_product.rating,
         delivery_charge_snapshot=merchant_product.delivery_charge,
-        cashback_snapshot=merchant_product.cashback_available
+        cashback_snapshot=False
     )
     return new_record
 
@@ -41,8 +41,8 @@ def get_price_statistics(merchant_product):
         return None
         
     stats = {
-        'current_price': qs.first().price,
-        'currency': merchant_product.currency,
+        'current_price': merchant_product.merchant_price,
+        'currency': merchant_product.merchant.currency,
         'all_time': qs.aggregate(
             lowest=Min('price'),
             highest=Max('price'),

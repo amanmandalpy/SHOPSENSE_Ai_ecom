@@ -1,0 +1,96 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="tw-wrapper mb-8" style="font-family: ui-sans-serif, system-ui, sans-serif;">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8 mt-2">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 m-0" style="background:transparent!important; color:#1f2937!important;">Business Operating System Overview</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Users -->
+            <div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-blue-600 mb-1">Total Users</p>
+                        <h3 class="text-3xl font-bold text-gray-900 m-0">{{ bos_stats.total_users }}</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-blue-600 mt-4"><span class="font-bold">{{ bos_stats.new_users_today }}</span> new today</p>
+            </div>
+            
+            <!-- Products -->
+            <div class="bg-indigo-50 rounded-xl p-5 border border-indigo-100">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-indigo-600 mb-1">Total Products</p>
+                        <h3 class="text-3xl font-bold text-gray-900 m-0">{{ bos_stats.total_products }}</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                        <i class="fa-solid fa-box"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-indigo-600 mt-4"><span class="font-bold">{{ bos_stats.total_merchant_products }}</span> merchant mappings</p>
+            </div>
+            
+            <!-- AI Requests -->
+            <div class="bg-purple-50 rounded-xl p-5 border border-purple-100">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-purple-600 mb-1">AI Requests</p>
+                        <h3 class="text-3xl font-bold text-gray-900 m-0">{{ bos_stats.total_ai_requests }}</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                        <i class="fa-solid fa-sparkles"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-purple-600 mt-4">Powered by Gemini</p>
+            </div>
+            
+            <!-- Support -->
+            <div class="bg-orange-50 rounded-xl p-5 border border-orange-100">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-orange-600 mb-1">Open Tickets</p>
+                        <h3 class="text-3xl font-bold text-gray-900 m-0">{{ bos_stats.open_support_tickets }}</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-orange-600 mt-4">Requires attention</p>
+            </div>
+        </div>
+        
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 m-0" style="background:transparent!important; color:#1f2937!important;">Engagement Metrics</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                        <span class="text-gray-600 font-medium">Wishlist Items</span>
+                        <span class="font-bold text-gray-900">{{ bos_stats.total_wishlists }}</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                        <span class="text-gray-600 font-medium">Newsletter Subscribers</span>
+                        <span class="font-bold text-gray-900">{{ bos_stats.total_newsletters }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 m-0" style="background:transparent!important; color:#1f2937!important;">Quick Actions</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="{% url 'admin:support_supportticket_changelist' %}" class="bg-white border border-gray-200 rounded-lg p-3 text-center hover:shadow-md hover:border-blue-500 transition text-gray-700 font-medium text-sm no-underline hover:text-blue-600 block">Manage Tickets</a>
+                    <a href="{% url 'admin:system_sitesettings_changelist' %}" class="bg-white border border-gray-200 rounded-lg p-3 text-center hover:shadow-md hover:border-blue-500 transition text-gray-700 font-medium text-sm no-underline hover:text-blue-600 block">Site Settings</a>
+                    <a href="{% url 'admin:system_systemlog_changelist' %}" class="bg-white border border-gray-200 rounded-lg p-3 text-center hover:shadow-md hover:border-blue-500 transition text-gray-700 font-medium text-sm no-underline hover:text-blue-600 block">View Logs</a>
+                    <a href="{% url 'admin:products_product_changelist' %}" class="bg-white border border-gray-200 rounded-lg p-3 text-center hover:shadow-md hover:border-blue-500 transition text-gray-700 font-medium text-sm no-underline hover:text-blue-600 block">Manage Products</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ block.super }}
+{% endblock %}

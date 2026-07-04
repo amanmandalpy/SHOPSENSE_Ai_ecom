@@ -1,27 +1,20 @@
-# ShopSense AI
+# ShopSense AI v1.0
 
-ShopSense AI is a next-generation eCommerce aggregation and intelligence platform designed to help consumers find the absolute best deals across the internet using Artificial Intelligence.
+ShopSense AI is a next-generation e-commerce comparison engine powered by Gemini AI.
 
-## Features
-- **Price Tracking:** Monitor historical price drops across multiple retailers.
-- **AI Assistant:** Chat natively with an AI that knows the entire product catalog and active discounts.
-- **Smart Comparison:** Instantly compare specifications side-by-side.
-- **Personalization Engine:** A dynamic homepage that curates "Recommended for You" products based on your live browsing history.
-- **Coupons & Savings:** Automatically calculates the absolute cheapest price after applying bank and festival offers.
+## Architecture Highlights
+- **Django 5.1 & Python 3.13**: Secure, robust backend.
+- **Celery & Redis**: Background processing for AI jobs, Price Alerts, and email queues.
+- **Business Operating System (BOS)**: Complete custom admin panel overriding standard Django Admin.
+- **Tailwind CSS**: Utility-first CSS framework for rapid and beautiful UI.
 
-## Tech Stack
-- **Backend:** Django (Python 3.11)
-- **Database:** PostgreSQL (AWS RDS) & Redis (AWS ElastiCache)
-- **Frontend:** HTML, TailwindCSS Vanilla
-- **AI Integration:** Groq (Llama-3) API
-- **Infrastructure:** AWS EC2, S3, Celery, Gunicorn, Nginx
+## Modules
+1. **Core / Accounts**: Custom User model, auth flows, personalized dashboard.
+2. **Products / Categories**: Taxonomy engine, specifications, variants.
+3. **Price Tracking & Alerts**: Automated Celery workers monitoring merchant price drops.
+4. **AI Assistant**: Gemini integration for contextual buying guides and product recommendations.
+5. **Coupons / Offers**: Deal engine.
+6. **Support / Legal**: Centralized FAQ and compliance engine.
+7. **BOS / Analytics**: Real-time traffic, ticket, and sales dashboard.
 
-## Local Development
-1. Clone the repository.
-2. `python -m venv .venv` and `source .venv/bin/activate`
-3. `pip install -r requirements.txt`
-4. Copy `.env.example` to `.env` and fill variables.
-5. `python manage.py migrate`
-6. `python manage.py runserver`
-
-For deployment instructions, see `docs/DEPLOYMENT.md`.
+For deployment instructions, please see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).

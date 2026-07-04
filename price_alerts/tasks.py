@@ -10,7 +10,7 @@ def process_active_price_alerts():
     Scans all active Price Alerts.
     If the underlying merchant product price meets the trigger condition, it fires a notification.
     """
-    active_alerts = PriceAlert.objects.filter(status=AlertStatus.ACTIVE).select_related('merchant_product', 'user', 'merchant_product__product', 'merchant_product__store')
+    active_alerts = PriceAlert.objects.filter(status=AlertStatus.ACTIVE).select_related('merchant_product', 'user', 'merchant_product__product', 'merchant_product__merchant')
     
     triggered_count = 0
     now = timezone.now()
@@ -18,7 +18,7 @@ def process_active_price_alerts():
     for alert in active_alerts:
         product_name = alert.merchant_product.product.name
         store_name = alert.merchant_product.store.name
-        current_price = alert.merchant_product.current_price
+        current_price = alert.merchant_product.merchant_price
         
         trigger = False
         message = ""
@@ -39,7 +39,7 @@ def process_active_price_alerts():
                 title=f"Price Alert Triggered: {product_name}",
                 message=message,
                 notification_type=NotificationType.PRICE_ALERT,
-                action_url=alert.merchant_product.get_absolute_url()
+                action_url=alert.merchant_product.get_absolute_url
             )
             triggered_count += 1
             

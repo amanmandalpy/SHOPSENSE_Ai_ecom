@@ -75,7 +75,7 @@ def get_dynamic_comparison_matrix(comp_list):
             spec_matrix[key].append(prod_specs.get(key, "-"))
             
         # Price tracking for highlights
-        best_listing = product.merchant_listings.order_by('current_price').first()
+        best_listing = product.merchant_listings.order_by('merchant_price').first()
         if best_listing:
             prices.append(best_listing.current_price)
             

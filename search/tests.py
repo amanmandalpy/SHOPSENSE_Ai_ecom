@@ -2,7 +2,7 @@ from django.test import TestCase
 from products.models import Product
 from brands.models import Brand
 from categories.models import Category
-from stores.models import Store
+from affiliate.models import Merchant
 from merchant_products.models import MerchantProduct, StockStatus
 from search.services import execute_search, log_search
 from search.models import SearchQuery
@@ -10,15 +10,15 @@ from decimal import Decimal
 
 class AdvancedSearchTestCase(TestCase):
     def setUp(self):
-        self.brand = Brand.objects.create(name='Sony', slug='sony')
-        self.category = Category.objects.create(name='Audio', slug='audio')
-        self.store1 = Store.objects.create(name='Amazon', slug='amazon')
+        self.brand = Brand.objects.create(name='Sony')
+        self.category = Category.objects.create(name='Audio')
+        self.merchant1 = Merchant.objects.create(name='Amazon')
         
         self.product1 = Product.objects.create(name='WH-1000XM4', brand=self.brand, category=self.category, sku='SONY-XM4', status='ACTIVE')
         self.product2 = Product.objects.create(name='WH-1000XM5', brand=self.brand, category=self.category, sku='SONY-XM5', status='ACTIVE')
         
-        MerchantProduct.objects.create(product=self.product1, store=self.store1, current_price=Decimal('250.00'), availability_status=StockStatus.IN_STOCK)
-        MerchantProduct.objects.create(product=self.product2, store=self.store1, current_price=Decimal('350.00'), availability_status=StockStatus.IN_STOCK)
+        MerchantProduct.objects.create(product=self.product1, merchant=self.merchant1, merchant_price=Decimal('250.00'), stock=StockStatus.IN_STOCK)
+        MerchantProduct.objects.create(product=self.product2, merchant=self.merchant1, merchant_price=Decimal('350.00'), stock=StockStatus.IN_STOCK)
 
     def test_search_by_name(self):
         qs = execute_search('XM4')

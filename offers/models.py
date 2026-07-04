@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from stores.models import Store
+from affiliate.models import Merchant
 
 class OfferType(models.TextChoices):
     BANK_DISCOUNT = 'BANK_DISCOUNT', 'Bank Discount'
@@ -15,7 +15,7 @@ class DiscountType(models.TextChoices):
 class BankOffer(models.Model):
     name = models.CharField(max_length=255)
     bank_name = models.CharField(max_length=100) # e.g. HDFC, ICICI, SBI
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='bank_offers', null=True, blank=True)
+    merchant = models.ForeignKey(Merchant, on_delete=models.CASCADE, related_name='bank_offers', null=True, blank=True)
     
     offer_type = models.CharField(max_length=50, choices=OfferType.choices, default=OfferType.BANK_DISCOUNT)
     discount_type = models.CharField(max_length=20, choices=DiscountType.choices)

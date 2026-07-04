@@ -5,7 +5,7 @@ from ai_assistant.scoring import ShoppingScoreService, ValueBadgeService
 from ai_assistant.services import RecommendationService, PromptBuilderService
 from ai_assistant.models import PromptTemplate, PromptCategory
 from products.models import Product
-from stores.models import Store
+from affiliate.models import Merchant
 from merchant_products.models import MerchantProduct, StockStatus
 from brands.models import Brand
 from categories.models import Category
@@ -13,15 +13,15 @@ import json
 
 class AIShoppingEngineTestCase(TestCase):
     def setUp(self):
-        self.store = Store.objects.create(name='Test Store', slug='test')
-        self.brand = Brand.objects.create(name='Sony', slug='sony')
-        self.cat = Category.objects.create(name='TV', slug='tv')
+        self.merchant = Merchant.objects.create(name='Test Store')
+        self.brand = Brand.objects.create(name='Sony')
+        self.cat = Category.objects.create(name='TV')
         self.product = Product.objects.create(name='Ultra TV', sku='UTV1', status='ACTIVE', brand=self.brand, category=self.cat)
         self.listing = MerchantProduct.objects.create(
             product=self.product,
-            store=self.store,
-            current_price=Decimal('1000.00'),
-            availability_status=StockStatus.IN_STOCK
+            merchant=self.merchant,
+            merchant_price=Decimal('1000.00'),
+            stock=StockStatus.IN_STOCK
         )
 
     def test_shopping_score_baseline(self):

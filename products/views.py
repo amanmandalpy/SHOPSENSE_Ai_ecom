@@ -11,7 +11,7 @@ class ProductListView(ListView):
     paginate_by = 24
 
     def get_queryset(self):
-        qs = Product.objects.filter(status='ACTIVE')
+        qs = Product.objects.filter(status='ACTIVE').select_related('brand', 'category').prefetch_related('tags')
         
         # Search functionality
         query = self.request.GET.get('q')

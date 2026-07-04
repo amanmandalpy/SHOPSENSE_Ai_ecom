@@ -2,26 +2,26 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from products.models import Product
-from stores.models import Store
+from affiliate.models import Merchant
 from brands.models import Brand
 from categories.models import Category
 from .models import MerchantProduct, StockStatus
 
 class MerchantProductTestCase(TestCase):
     def setUp(self):
-        self.brand = Brand.objects.create(name='Sony', slug='sony')
-        self.category = Category.objects.create(name='Audio', slug='audio')
+        self.brand = Brand.objects.create(name='Sony')
+        self.category = Category.objects.create(name='Audio')
         self.product = Product.objects.create(name='WH-1000XM5', brand=self.brand, category=self.category, sku='SONY-XM5')
-        self.store1 = Store.objects.create(name='Amazon', slug='amazon')
-        self.store2 = Store.objects.create(name='Flipkart', slug='flipkart')
+        self.merchant1 = Merchant.objects.create(name='Amazon')
+        self.merchant2 = Merchant.objects.create(name='Flipkart')
         
         self.listing1 = MerchantProduct.objects.create(
             product=self.product,
-            store=self.store1,
+            merchant=self.merchant1,
             merchant_product_url='https://amazon.com/sony',
-            current_price=299.99,
+            merchant_price=299.99,
             original_price=399.99,
-            availability_status=StockStatus.IN_STOCK
+            stock=StockStatus.IN_STOCK
         )
 
     def test_discount_calculation(self):
@@ -32,17 +32,17 @@ class MerchantProductTestCase(TestCase):
         with self.assertRaises(IntegrityError):
             MerchantProduct.objects.create(
                 product=self.product,
-                store=self.store1,
+                merchant=self.merchant1,
                 merchant_product_url='https://amazon.com/sony-2',
-                current_price=250.00
+                merchant_price=250.00
             )
 
     def test_negative_price_validation(self):
         listing = MerchantProduct(
             product=self.product,
-            store=self.store2,
+            merchant=self.merchant2,
             merchant_product_url='https://flipkart.com/sony',
-            current_price=-10.00
+            merchant_price=-10.00
         )
         with self.assertRaises(ValidationError):
             listing.full_clean()
@@ -51,9 +51,9 @@ class MerchantProductTestCase(TestCase):
     def test_original_price_validation(self):
         listing = MerchantProduct(
             product=self.product,
-            store=self.store2,
+            merchant=self.merchant2,
             merchant_product_url='https://flipkart.com/sony',
-            current_price=300.00,
+            merchant_price=300.00,
             original_price=200.00
         )
         with self.assertRaises(ValidationError):

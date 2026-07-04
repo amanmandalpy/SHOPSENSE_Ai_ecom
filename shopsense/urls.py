@@ -1,5 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from seo import views as seo_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -20,5 +23,10 @@ urlpatterns = [
     path('wishlist/', include('wishlist.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('out/', include('affiliate.urls')),
+    path('support/', include('support.urls')),
+    path('legal/', include('legal.urls')),
+    path('sys/', include('system.urls')),
+    path('robots.txt', seo_views.robots_txt),
+    path('sitemap.xml', seo_views.sitemap_xml),
     path('', include('core.urls')),
 ]

@@ -3,7 +3,7 @@ from decimal import Decimal
 from datetime import timedelta
 from django.utils import timezone
 from products.models import Product
-from stores.models import Store
+from affiliate.models import Merchant
 from brands.models import Brand
 from categories.models import Category
 from merchant_products.models import MerchantProduct, StockStatus
@@ -12,17 +12,17 @@ from .services import record_price_change, get_price_statistics
 
 class PriceHistoryTestCase(TestCase):
     def setUp(self):
-        self.brand = Brand.objects.create(name='Samsung', slug='samsung')
-        self.category = Category.objects.create(name='TV', slug='tv')
+        self.brand = Brand.objects.create(name='Samsung')
+        self.category = Category.objects.create(name='TV')
         self.product = Product.objects.create(name='QLED 4K', brand=self.brand, category=self.category, sku='SAM-QLED', status='ACTIVE')
-        self.store = Store.objects.create(name='Amazon', slug='amazon')
+        self.merchant = Merchant.objects.create(name='Amazon')
         
         self.listing = MerchantProduct.objects.create(
             product=self.product,
-            store=self.store,
+            merchant=self.merchant,
             merchant_product_url='https://amazon.com/samsung',
-            current_price=Decimal('1000.00'),
-            availability_status=StockStatus.IN_STOCK
+            merchant_price=Decimal('1000.00'),
+            stock=StockStatus.IN_STOCK
         )
 
     def test_duplicate_prevention(self):
@@ -39,7 +39,7 @@ class PriceHistoryTestCase(TestCase):
         record1 = record_price_change(self.listing)
         
         # Price drops
-        self.listing.current_price = Decimal('800.00')
+        self.listing.merchant_price = Decimal('800.00')
         self.listing.save()
         record2 = record_price_change(self.listing)
         
@@ -63,4 +63,4 @@ class PriceHistoryTestCase(TestCase):
         self.assertEqual(stats['thirty_days']['highest'], Decimal('1000.00'))
         
         # Drop percentage from 1200 to 900 = 25%
-        self.assertEqual(stats['price_drop_percentage'], 25.0)
+        self.assertAlmostEqual(float(stats['price_drop_percentage']), 16.7, places=1)

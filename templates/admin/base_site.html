@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    /* Prevent Tailwind from breaking django admin base */
+    #header { background: #111827 !important; color: white !important; }
+    #header a:link, #header a:visited { color: white !important; }
+    .module h2, .module caption, .inline-group h2 { background: #3b82f6 !important; }
+    .button, input[type=submit], input[type=button], .submit-row input, a.button { background: #3b82f6 !important; border-radius: 6px !important; }
+    .button:hover, input[type=submit]:hover, input[type=button]:hover { background: #2563eb !important; }
+    #content h1 { display: none; } /* Hide default Dashboard h1 */
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">ShopSense BOS</a></h1>
+{% endblock %}

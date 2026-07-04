@@ -55,3 +55,13 @@ class NewsletterSubscribeView(View):
         
         referer = request.META.get('HTTP_REFERER', '/')
         return redirect(referer)
+
+from django.shortcuts import get_object_or_404
+
+class NewsletterUnsubscribeView(View):
+    def get(self, request, token):
+        subscription = get_object_or_404(NewsletterSubscription, unsubscribe_token=token)
+        subscription.is_active = False
+        subscription.save()
+        messages.success(request, "You have been successfully unsubscribed from our newsletter.")
+        return redirect('home')

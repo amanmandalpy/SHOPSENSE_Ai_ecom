@@ -74,7 +74,7 @@ class RecommendationService:
         recommended_listings = []
         for list_id in parsed.get("recommended_products", []):
             try:
-                listing = MerchantProduct.objects.select_related('product', 'store').get(pk=list_id)
+                listing = MerchantProduct.objects.select_related('product', 'merchant').get(pk=list_id)
                 score = ShoppingScoreService.calculate_score(listing)
                 badges = ValueBadgeService.get_badges(score, listing.current_price)
                 

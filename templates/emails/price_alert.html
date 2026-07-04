@@ -1,0 +1,14 @@
+<!DOCTYPE html><html><head><style>
+        body { font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 0; }
+        .wrapper { padding: 40px 20px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .logo { font-size: 24px; font-weight: 800; color: #3b82f6; margin-bottom: 30px; letter-spacing: -0.5px; }
+        .btn { display: inline-block; padding: 14px 28px; background-color: #3b82f6; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 20px; text-align: center; }
+        .footer { margin-top: 40px; font-size: 13px; color: #9ca3af; text-align: center; border-top: 1px solid #e5e7eb; padding-top: 20px; }
+</style></head><body><div class="wrapper"><div class="container">
+        <div class="logo">ShopSense AI</div>
+        <h2>Good news! A price dropped.</h2>
+        <p>The price for <strong>{{ product.name }}</strong> has dropped to <strong>${{ current_price }}</strong> (Target: ${{ target_price }}).</p>
+        <a href="{{ product_url }}" class="btn">View Deal</a>
+        <div class="footer">You received this because you set a price alert. &copy; {{ current_year }} ShopSense AI.</div>
+    </div></div></body></html>

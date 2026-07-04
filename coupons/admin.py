@@ -3,6 +3,6 @@ from .models import Coupon
 
 @admin.register(Coupon)
 class CouponAdmin(admin.ModelAdmin):
-    list_display = ('code', 'store', 'discount_type', 'discount_value', 'status', 'valid_until')
-    list_filter = ('status', 'discount_type', 'store')
+    list_display = ('code', 'merchant', 'discount_type', 'discount_value', 'status', 'valid_until')
+    list_filter = ('status', 'discount_type', 'merchant')
     search_fields = ('code', 'name')

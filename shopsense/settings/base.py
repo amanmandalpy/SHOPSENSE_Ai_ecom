@@ -49,6 +49,12 @@ INSTALLED_APPS = [
     'seo.apps.SeoConfig',
     'affiliate.apps.AffiliateConfig',
     'merchant_connectors.apps.MerchantConnectorsConfig',
+    'support.apps.SupportConfig',
+    'legal.apps.LegalConfig',
+    'system.apps.SystemConfig',
+    'merchant_sync.apps.MerchantSyncConfig',
+    'merchant_feeds.apps.MerchantFeedsConfig',
+    'tracking.apps.TrackingConfig',
     'api.apps.ApiConfig',
 ]
 
@@ -78,6 +84,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'system.context_processors.admin_dashboard_stats',
             ],
         },
     },

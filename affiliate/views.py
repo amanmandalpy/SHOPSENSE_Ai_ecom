@@ -1,18 +1,25 @@
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views import View
+from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from merchant_products.models import MerchantProduct
-from .services import DeepLinkService, AffiliateService
+from affiliate.redirect_service import AffiliateRedirectService
 
-class AffiliateRedirectView(View):
-    def get(self, request, listing_id):
-        listing = get_object_or_404(MerchantProduct, pk=listing_id)
+class OutboundRedirectView(View):
+    def get(self, request, *args, **kwargs):
+        merchant_product_id = kwargs.get('pk')
+        if not merchant_product_id:
+            return HttpResponseBadRequest("Missing product identifier.")
+            
+        merchant_product = get_object_or_404(MerchantProduct, pk=merchant_product_id)
         
-        # 1. Generate Deep Link dynamically
-        outbound_url = DeepLinkService.generate_affiliate_url(listing)
+        # Security: ensure merchant is active
+        if merchant_product.merchant.status != 'ACTIVE':
+            return HttpResponseNotFound("Merchant is not active.")
+            
+        final_url = AffiliateRedirectService.generate_redirect_url_and_track(merchant_product, request)
         
-        # 2. Log Outbound Click synchronously
-        AffiliateService.log_click(request, listing, outbound_url)
-        
-        # 3. Transparent Redirect
-        return HttpResponseRedirect(outbound_url)
+        if not final_url:
+            return HttpResponseBadRequest("Invalid destination URL.")
+            
+        # HTTP 302 Found (Standard for affiliate redirects)
+        return redirect(final_url)
