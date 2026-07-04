@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}{{ store.meta_title|default:store.name }} - ShopSense AI{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8 relative">
+        <div class="h-32 w-full" style="background-color: {{ store.color_theme }}; opacity: 0.1;"></div>
+        <div class="p-8 relative -mt-16 flex flex-col md:flex-row items-center md:items-start gap-8">
+            <div class="bg-white p-4 rounded-xl shadow-sm border h-32 w-32 flex items-center justify-center bg-contain bg-center bg-no-repeat" 
+                 {% if store.logo %}style="background-image: url('{{ store.logo.url }}');"{% endif %}>
+                {% if not store.logo %}
+                    <span class="text-4xl font-bold text-gray-400">{{ store.name|make_list|first }}</span>
+                {% endif %}
+            </div>
+            <div class="flex-grow text-center md:text-left mt-4 md:mt-16">
+                <h1 class="text-4xl font-bold mb-2">{{ store.name }}</h1>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-gray-500 mb-4">
+                    <span class="flex items-center text-yellow-500 font-medium">★ {{ store.rating }}</span>
+                    {% if store.country %}<span>&bull; {{ store.country }}</span>{% endif %}
+                    {% if store.currency %}<span>&bull; {{ store.currency }}</span>{% endif %}
+                </div>
+                {% if store.description %}
+                    <p class="text-gray-700 max-w-3xl">{{ store.description }}</p>
+                {% endif %}
+            </div>
+            <div class="mt-4 md:mt-16">
+                {% if store.website_url %}
+                    <a href="{{ store.website_url }}" target="_blank" rel="noopener noreferrer" class="btn-primary hover:opacity-90" style="background-color: {{ store.color_theme }}; color: {% if store.color_theme == '#FFFFFF' %}#000{% else %}#fff{% endif %};">Shop on {{ store.name }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

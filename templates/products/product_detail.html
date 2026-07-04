@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.meta_title|default:product.name }} - ShopSense AI{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="mb-4 text-sm text-gray-500">
+        <a href="{% url 'category_list' %}" class="hover:text-blue-600">Categories</a> > 
+        <a href="{{ product.category.get_absolute_url }}" class="hover:text-blue-600">{{ product.category.name }}</a> > 
+        <span class="text-gray-900">{{ product.name }}</span>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8 flex flex-col md:flex-row gap-8">
+        <!-- Gallery -->
+        <div class="w-full md:w-2/5">
+            <div class="border rounded-lg p-4 mb-4 h-80 flex items-center justify-center">
+                {% if product.primary_image %}
+                    <img src="{{ product.primary_image.url }}" alt="{{ product.name }}" class="max-h-full object-contain">
+                {% else %}
+                    <span class="text-gray-400">No Image Available</span>
+                {% endif %}
+            </div>
+            {% if product.gallery_images.exists %}
+            <div class="flex gap-2 overflow-x-auto pb-2">
+                {% for img in product.gallery_images.all %}
+                    <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" class="w-16 h-16 object-cover border rounded cursor-pointer hover:border-blue-500">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Info -->
+        <div class="w-full md:w-3/5">
+            <a href="{{ product.brand.get_absolute_url }}" class="text-blue-600 font-semibold text-sm hover:underline uppercase tracking-wide">{{ product.brand.name }}</a>
+            <h1 class="text-3xl font-bold mt-2 mb-4">{{ product.name }}</h1>
+            
+            <div class="flex gap-2 mb-6">
+                {% if product.is_best_seller %}<span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Best Seller</span>{% endif %}
+                <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded">SKU: {{ product.sku }}</span>
+            </div>
+
+            {% if product.short_description %}
+                <p class="text-gray-700 text-lg mb-6">{{ product.short_description }}</p>
+            {% endif %}
+            
+            <!-- Store pricing modules with History -->
+            <div class="bg-gray-50 border rounded-lg p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4">Pricing & Availability</h3>
+                {% if merchant_stats %}
+                    <div class="flex flex-col gap-4">
+                        {% for item in merchant_stats %}
+                        <div class="bg-white p-4 rounded-lg shadow-sm border flex flex-col transition hover:shadow-md">
+                            <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
+                                <div class="flex items-center gap-4 w-full md:w-1/3">
+                                    {% if item.listing.store.logo %}
+                                        <img src="{{ item.listing.store.logo.url }}" alt="{{ item.listing.store.name }}" class="h-8 object-contain">
+                                    {% else %}
+                                        <span class="font-bold text-gray-700">{{ item.listing.store.name }}</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="flex flex-col w-full md:w-1/3 text-center md:text-left">
+                                    <span class="text-2xl font-bold text-gray-900">{{ item.listing.currency }} {{ item.listing.current_price }}</span>
+                                    {% if item.listing.original_price and item.listing.discount_percentage > 0 %}
+                                    <div class="text-sm">
+                                        <span class="line-through text-gray-400">{{ item.listing.currency }} {{ item.listing.original_price }}</span>
+                                        <span class="text-green-600 font-medium ml-1">({{ item.listing.discount_percentage|floatformat:0 }}% OFF)</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="flex flex-col w-full md:w-1/3 items-center md:items-end gap-2">
+                                    <a href="{{ item.listing.get_absolute_url }}" class="btn-primary w-full md:w-auto text-center" style="background-color: {{ item.listing.store.color_theme }}; color: {% if item.listing.store.color_theme == '#FFFFFF' %}#000{% else %}#fff{% endif %};">Buy Now</a>
+                                    <span class="text-xs text-gray-500">
+                                        {% if item.listing.availability_status == 'IN_STOCK' %}
+                                            <span class="text-green-600 font-medium">In Stock</span>
+                                        {% else %}
+                                            {{ item.listing.get_availability_status_display }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Price History Summary Cards -->
+                            <div class="border-t pt-4 grid grid-cols-3 gap-4 text-center text-sm">
+                                <div>
+                                    <span class="block text-gray-500 text-xs uppercase tracking-wider mb-1">Lowest</span>
+                                    <span class="font-bold text-green-600">{{ item.stats.currency }} {{ item.stats.all_time.lowest|default:"-" }}</span>
+                                </div>
+                                <div class="border-l border-r">
+                                    <span class="block text-gray-500 text-xs uppercase tracking-wider mb-1">Average</span>
+                                    <span class="font-bold text-blue-600">{{ item.stats.currency }} {{ item.stats.all_time.average|floatformat:2|default:"-" }}</span>
+                                </div>
+                                <div>
+                                    <span class="block text-gray-500 text-xs uppercase tracking-wider mb-1">Highest</span>
+                                    <span class="font-bold text-red-600">{{ item.stats.currency }} {{ item.stats.all_time.highest|default:"-" }}</span>
+                                </div>
+                            </div>
+                            {% if item.stats.price_drop_percentage > 0 %}
+                                <div class="mt-4 bg-green-50 text-green-700 text-xs px-3 py-2 rounded flex justify-center items-center font-medium">
+                                    🔥 Price dropped by {{ item.stats.price_drop_percentage|floatformat:1 }}% from its highest!
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 italic">No stores are currently offering this product.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Specifications -->
+    {% if product.specifications.exists %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+        <h2 class="text-2xl font-bold mb-6">Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            {% for spec in product.specifications.all %}
+            <div class="flex border-b pb-2">
+                <span class="w-1/3 text-gray-500 font-medium">{{ spec.key }}</span>
+                <span class="w-2/3 text-gray-900">{{ spec.value }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Full Description -->
+    {% if product.full_description %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8 prose max-w-none">
+        <h2 class="text-2xl font-bold mb-6">Overview</h2>
+        {{ product.full_description|linebreaks }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

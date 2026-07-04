@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}All Brands - ShopSense AI{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">Our Brands</h1>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        {% for brand in brands %}
+        <a href="{{ brand.get_absolute_url }}" class="flex flex-col items-center bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+            {% if brand.logo %}
+                <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="w-16 h-16 object-contain mb-4">
+            {% else %}
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 font-bold text-gray-400">{{ brand.name|make_list|first }}</div>
+            {% endif %}
+            <span class="font-medium text-gray-900 text-center">{{ brand.name }}</span>
+        </a>
+        {% empty %}
+        <p class="text-gray-500 col-span-full">No brands found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

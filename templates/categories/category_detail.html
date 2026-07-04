@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.meta_title|default:category.name }} - ShopSense AI{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="mb-6 text-sm text-gray-500">
+        <a href="{% url 'category_list' %}" class="hover:text-blue-600">Categories</a> > 
+        {% if category.parent %}
+            <a href="{{ category.parent.get_absolute_url }}" class="hover:text-blue-600">{{ category.parent.name }}</a> > 
+        {% endif %}
+        <span class="text-gray-900">{{ category.name }}</span>
+    </div>
+    
+    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
+        <h1 class="text-3xl font-bold mb-4">{{ category.name }}</h1>
+        {% if category.description %}<p class="text-gray-700">{{ category.description }}</p>{% endif %}
+    </div>
+
+    {% if category.children.filter %}
+    <h3 class="text-xl font-semibold mb-4">Sub Categories</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {% for child in category.children.all %}
+            {% if child.is_active %}
+            <a href="{{ child.get_absolute_url }}" class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center hover:bg-gray-50 transition">
+                <span class="font-medium text-blue-600">{{ child.name }}</span>
+            </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

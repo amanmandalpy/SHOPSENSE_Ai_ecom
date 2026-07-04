@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account - ShopSense AI{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+    <h2 class="text-2xl font-bold text-center mb-6">Create an Account</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="grid grid-cols-2 gap-4">
+            {% for field in form %}
+                <div class="mb-4 {% if field.name in 'username,email' %}col-span-2{% else %}col-span-1{% endif %}">
+                    <label class="block text-sm font-medium text-gray-700" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <p class="text-gray-500 text-xs mt-1">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="w-full btn-primary py-3 mt-4">Sign Up</button>
+    </form>
+    <p class="text-center text-sm mt-6 text-gray-600">
+        Already have an account? <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Login</a>
+    </p>
+</div>
+<script>
+    document.querySelectorAll('input').forEach(e => {
+        if(e.type !== 'hidden') e.classList.add('input-field');
+    });
+</script>
+{% endblock %}

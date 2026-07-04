@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}All Categories - ShopSense AI{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">All Categories</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for category in categories %}
+        <a href="{{ category.get_absolute_url }}" class="block bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+            <h2 class="text-xl font-semibold text-blue-600 mb-2">{{ category.name }}</h2>
+            {% if category.description %}<p class="text-gray-600 text-sm">{{ category.description|truncatewords:20 }}</p>{% endif %}
+            {% if category.children.filter %}
+                <p class="text-xs text-gray-400 mt-4">{{ category.children.filter.count }} sub-categories</p>
+            {% endif %}
+        </a>
+        {% empty %}
+        <p class="text-gray-500">No categories found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

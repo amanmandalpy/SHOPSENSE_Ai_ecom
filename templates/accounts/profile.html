@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - ShopSense AI{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+    <h2 class="text-2xl font-bold mb-6">My Profile</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for field in form %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mt-8 flex justify-end space-x-4">
+            <a href="{% url 'password_change' %}" class="text-gray-600 hover:text-gray-900 py-2">Change Password</a>
+            <button type="submit" class="btn-primary">Save Changes</button>
+        </div>
+    </form>
+</div>
+<script>
+    document.querySelectorAll('input, select').forEach(e => {
+        if(e.type !== 'hidden' && e.type !== 'file') e.classList.add('input-field');
+    });
+</script>
+{% endblock %}

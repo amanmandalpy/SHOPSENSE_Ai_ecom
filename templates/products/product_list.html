@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Products - ShopSense AI{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold">Products</h1>
+        <form method="get" class="flex space-x-2">
+            <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search products..." class="input-field max-w-xs !mt-0">
+            <button type="submit" class="btn-primary">Search</button>
+        </form>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {% for product in products %}
+        <a href="{{ product.get_absolute_url }}" class="flex flex-col bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition relative group">
+            {% if product.is_new_arrival %}
+                <span class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded z-10">New</span>
+            {% endif %}
+            <div class="h-40 flex items-center justify-center mb-4 overflow-hidden relative">
+                {% if product.thumbnail %}
+                    <img src="{{ product.thumbnail.url }}" alt="{{ product.name }}" class="max-h-full object-contain group-hover:scale-105 transition-transform duration-300">
+                {% else %}
+                    <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">No Image</div>
+                {% endif %}
+            </div>
+            <div class="flex-grow flex flex-col justify-between">
+                <div>
+                    <p class="text-xs text-gray-500 mb-1">{{ product.brand.name }}</p>
+                    <h2 class="font-medium text-sm text-gray-900 line-clamp-2 leading-tight">{{ product.name }}</h2>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <p class="text-gray-500 col-span-full">No products found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{{ brand.meta_title|default:brand.name }} - ShopSense AI{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:items-start gap-8">
+        {% if brand.logo %}
+            <img src="{{ brand.logo.url }}" alt="{{ brand.name }} Logo" class="w-32 h-32 object-contain border rounded-lg p-2">
+        {% endif %}
+        <div class="flex-grow">
+            <h1 class="text-3xl font-bold mb-2">{{ brand.name }}</h1>
+            {% if brand.country or brand.founded_year %}
+                <p class="text-sm text-gray-500 mb-4">
+                    {% if brand.country %}Based in {{ brand.country }}{% endif %}
+                    {% if brand.country and brand.founded_year %} &bull; {% endif %}
+                    {% if brand.founded_year %}Founded {{ brand.founded_year }}{% endif %}
+                </p>
+            {% endif %}
+            {% if brand.description %}
+                <p class="text-gray-700 max-w-3xl">{{ brand.description }}</p>
+            {% endif %}
+            {% if brand.website %}
+                <a href="{{ brand.website }}" target="_blank" rel="noopener noreferrer" class="inline-block mt-4 text-blue-600 hover:underline font-medium">Visit Official Website &rarr;</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
