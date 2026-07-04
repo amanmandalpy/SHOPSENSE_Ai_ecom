@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}My Wishlist - ShopSense AI{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-black text-gray-900">❤️ My Wishlist</h1>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="p-4 mb-8 rounded-xl {% if message.tags == 'success' %}bg-green-50 text-green-700 border border-green-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %} font-medium">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if not mapped_items %}
+        <div class="text-center py-20 bg-gray-50 rounded-3xl border border-gray-100">
+            <div class="text-5xl mb-4">🛒</div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Your wishlist is empty</h2>
+            <p class="text-gray-500 mb-6 max-w-md mx-auto">Start saving items you love to keep track of their prices and receive personalized recommendations.</p>
+            <a href="{% url 'home' %}" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition inline-block">Explore Products</a>
+        </div>
+    {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for wrapper in mapped_items %}
+                <div class="relative group">
+                    <!-- Wishlist Remove Form -->
+                    <form action="{% url 'wishlist_remove' wrapper.item.id %}" method="post" class="absolute top-4 right-4 z-20">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-white p-2 rounded-full shadow hover:bg-red-50 hover:text-red-600 text-gray-400 transition" title="Remove from Wishlist">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </form>
+                    
+                    <!-- Standard Product Card -->
+                    {% include 'products/partials/product_card.html' with listing=wrapper.listing %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

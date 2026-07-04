@@ -1,10 +1,13 @@
 from django.views.generic import ListView
+from django_ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
 from products.models import Product
 from .services import execute_search, log_search
 from categories.models import Category
 from brands.models import Brand
 from stores.models import Store
 
+@method_decorator(ratelimit(key='ip', rate='20/m', block=True), name='dispatch')
 class AdvancedSearchView(ListView):
     template_name = 'search/search_results.html'
     context_object_name = 'products'

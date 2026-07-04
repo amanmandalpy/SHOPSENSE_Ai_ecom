@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us | ShopSense AI{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-4">Get in Touch</h1>
+            <p class="text-lg text-gray-500 dark:text-gray-400">Have a question about a price drop or want to partner with us? Our team is here to help.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Contact Info -->
+            <div class="lg:col-span-1 space-y-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-primary flex-shrink-0">
+                        <i class="fa-regular fa-envelope text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Email Us</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-2">Drop us a line and we'll reply within 24 hours.</p>
+                        <a href="mailto:support@shopsense.ai" class="text-primary font-medium hover:underline">support@shopsense.ai</a>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 flex-shrink-0">
+                        <i class="fa-solid fa-map-location-dot text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Office</h3>
+                        <p class="text-gray-500 dark:text-gray-400 leading-relaxed">
+                            123 AI Boulevard, Tech Park<br>
+                            San Francisco, CA 94107
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm mt-8">
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2">Need quick answers?</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Check our knowledge base before reaching out.</p>
+                    <a href="{% url 'public_page' 'faq' %}" class="inline-block border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">Visit Help Center</a>
+                </div>
+            </div>
+            
+            <!-- Contact Form -->
+            <div class="lg:col-span-2">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700 p-8 md:p-10">
+                    <form method="post" action="{% url 'contact' %}" class="space-y-6">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Your Name</label>
+                                <input type="text" name="name" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" placeholder="John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                                <input type="email" name="email" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" placeholder="john@example.com">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject</label>
+                            <input type="text" name="subject" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" placeholder="How can we help?">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
+                            <textarea name="message" rows="5" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition resize-none" placeholder="Include as much detail as possible..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 transition-all hover-lift">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

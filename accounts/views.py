@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserProfileUpdateForm
@@ -21,6 +21,12 @@ class RegisterView(CreateView):
         login(self.request, user)
         messages.success(self.request, "Account created successfully! Please verify your email.")
         return redirect(self.success_url)
+
+class UserDashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/dashboard.html'
+
+class UserSettingsView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/settings.html'
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = User

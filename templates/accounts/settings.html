@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Settings | ShopSense AI{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row gap-8">
+    <!-- Sidebar -->
+    <div class="w-full md:w-64 flex-shrink-0">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sticky top-24">
+            <div class="flex items-center gap-3 px-3 pb-4 mb-4 border-b border-gray-100 dark:border-gray-700">
+                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=2563eb&color=fff" class="w-10 h-10 rounded-full">
+                <div>
+                    <p class="font-bold text-gray-900 dark:text-white text-sm">{{ user.username }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate w-32">{{ user.email }}</p>
+                </div>
+            </div>
+            <nav class="space-y-1">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <i class="fa-solid fa-chart-line w-5 text-center"></i> Overview
+                </a>
+                <a href="{% url 'wishlist_home' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <i class="fa-regular fa-heart w-5 text-center"></i> Wishlist
+                </a>
+                <a href="{% url 'settings' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium">
+                    <i class="fa-solid fa-gear w-5 text-center"></i> Settings
+                </a>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="flex-grow max-w-3xl">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Account Settings</h1>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden mb-8">
+            <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Profile Information</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Update your account's profile information and email address.</p>
+            </div>
+            <div class="p-6 bg-gray-50 dark:bg-gray-800/50">
+                <form method="post" action="{% url 'profile' %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
+                        <input type="text" disabled value="{{ user.username }}" class="w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-500 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                        <input type="email" value="{{ user.email }}" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Preferences</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage currency and language settings.</p>
+            </div>
+            <div class="p-6 bg-gray-50 dark:bg-gray-800/50">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-white">Default Currency</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">USD ($)</p>
+                        </div>
+                        <button class="text-primary text-sm font-medium hover:underline">Edit</button>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-white">Email Notifications</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Receive price drop alerts via email</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+<div class="group bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden hover-lift flex flex-col relative h-full">
+    <!-- Quick Actions Overlay -->
+    <div class="absolute top-3 right-3 z-10 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <form action="{% url 'wishlist_add' product.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="w-8 h-8 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-500 hover:text-red-500 shadow-sm transition"><i class="fa-regular fa-heart"></i></button>
+        </form>
+        <form action="{% url 'add_to_compare' product.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="w-8 h-8 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-500 hover:text-primary shadow-sm transition"><i class="fa-solid fa-code-compare"></i></button>
+        </form>
+    </div>
+
+    <!-- Image -->
+    <a href="{% url 'product_detail' product.slug %}" class="relative block bg-gray-50 dark:bg-gray-900/50 p-6 flex items-center justify-center h-48">
+        {% if product.primary_image %}
+            <img src="{{ product.primary_image.url }}" alt="{{ product.name }}" class="object-contain h-full w-full group-hover:scale-105 transition-transform duration-300">
+        {% else %}
+            <div class="text-gray-300 dark:text-gray-600"><i class="fa-solid fa-image text-4xl"></i></div>
+        {% endif %}
+        <!-- Example discount pill (if data existed on best_listing) -->
+        <span class="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Deal</span>
+    </a>
+
+    <!-- Info -->
+    <div class="p-5 flex flex-col flex-grow">
+        <p class="text-[10px] text-primary font-bold tracking-widest uppercase mb-1">{{ product.brand.name|default:"Brand" }}</p>
+        <a href="{% url 'product_detail' product.slug %}" class="text-gray-900 dark:text-white font-medium text-sm leading-tight line-clamp-2 hover:text-primary transition mb-3">
+            {{ product.name }}
+        </a>
+        <div class="mt-auto">
+            {% if product.best_listing %}
+                <div class="flex items-center gap-1 mb-1">
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Lowest at</span>
+                    <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">{{ product.best_listing.store.name }}</span>
+                </div>
+                <div class="flex items-end gap-2">
+                    <p class="text-lg font-bold text-gray-900 dark:text-white">{{ product.best_listing.store.currency }} {{ product.best_listing.current_price }}</p>
+                </div>
+            {% else %}
+                <p class="text-sm text-gray-400">Out of Stock</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

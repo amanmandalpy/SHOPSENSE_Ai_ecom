@@ -28,6 +28,11 @@ def execute_search(query_string, filters=None, sort_by=None):
         
     query_string = clean_keyword(query_string)
     
+    from analytics.services import AnalyticsService
+    from analytics.models import EventType
+    AnalyticsService.log_event(EventType.SEARCH, metadata={'query': query_string, 'filters': filters})
+    
+    
     # Base queryset for active products
     qs = Product.objects.filter(status='ACTIVE')
     

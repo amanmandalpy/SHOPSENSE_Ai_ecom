@@ -42,13 +42,20 @@ INSTALLED_APPS = [
     'dashboard.apps.DashboardConfig',
     'merchant_products.apps.MerchantProductsConfig',
     'comparison.apps.ComparisonConfig',
+    'offers.apps.OffersConfig',
     'ai_assistant.apps.AiAssistantConfig',
+    'recommendation.apps.RecommendationConfig',
+    'user_preferences.apps.UserPreferencesConfig',
+    'seo.apps.SeoConfig',
+    'affiliate.apps.AffiliateConfig',
+    'merchant_connectors.apps.MerchantConnectorsConfig',
     'api.apps.ApiConfig',
 ]
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'seo.middleware.UrlRedirectMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',

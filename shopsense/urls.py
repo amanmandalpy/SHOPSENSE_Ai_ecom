@@ -14,4 +14,11 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('search/', include('search.urls')),
     path('compare/', include('comparison.urls')),
+    path('coupons/', include('coupons.urls')),
+    path('offers/', include('offers.urls')),
+    path('ai/', include('ai_assistant.urls')),
+    path('wishlist/', include('wishlist.urls')),
+    path('dashboard/', include('dashboard.urls')),
+    path('out/', include('affiliate.urls')),
+    path('', include('core.urls')),
 ]

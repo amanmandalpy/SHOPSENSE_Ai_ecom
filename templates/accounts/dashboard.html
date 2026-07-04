@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}My Dashboard | ShopSense AI{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row gap-8">
+    <!-- Sidebar -->
+    <div class="w-full md:w-64 flex-shrink-0">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sticky top-24">
+            <div class="flex items-center gap-3 px-3 pb-4 mb-4 border-b border-gray-100 dark:border-gray-700">
+                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=2563eb&color=fff" class="w-10 h-10 rounded-full">
+                <div>
+                    <p class="font-bold text-gray-900 dark:text-white text-sm">{{ user.username }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate w-32">{{ user.email }}</p>
+                </div>
+            </div>
+            <nav class="space-y-1">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium">
+                    <i class="fa-solid fa-chart-line w-5 text-center"></i> Overview
+                </a>
+                <a href="{% url 'wishlist_home' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <i class="fa-regular fa-heart w-5 text-center"></i> Wishlist
+                </a>
+                <a href="{% url 'settings' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <i class="fa-solid fa-gear w-5 text-center"></i> Settings
+                </a>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="flex-grow">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Dashboard Overview</h1>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+            <!-- Stat Cards -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center text-center hover-lift">
+                <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 flex items-center justify-center text-xl mb-4"><i class="fa-regular fa-heart"></i></div>
+                <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ user.wishlist_items.count|default:"0" }}</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Wishlisted Items</p>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center text-center hover-lift">
+                <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-500 flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-bell"></i></div>
+                <h3 class="text-3xl font-bold text-gray-900 dark:text-white">0</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Active Alerts</p>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center text-center hover-lift">
+                <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-500 flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <h3 class="text-3xl font-bold text-gray-900 dark:text-white">0</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Recently Viewed</p>
+            </div>
+        </div>
+        
+        <!-- Activity Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Recent Activity</h2>
+            <!-- Empty State -->
+            <div class="text-center py-16 px-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
+                <div class="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto shadow-sm mb-4">
+                    <i class="fa-solid fa-inbox text-2xl text-gray-400 dark:text-gray-500"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No recent activity</h3>
+                <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-6">You haven't interacted with any products recently. Start exploring the latest deals.</p>
+                <a href="{% url 'search_results' %}" class="bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-6 py-2.5 rounded-full font-medium hover:bg-gray-800 transition shadow-sm hover-lift">Browse Catalog</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

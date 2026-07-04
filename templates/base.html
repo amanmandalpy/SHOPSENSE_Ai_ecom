@@ -1,60 +1,219 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ShopSense AI{% endblock %}</title>
+    <title>{% block title %}ShopSense AI - Premium Shopping Intelligence{% endblock %}</title>
+    <!-- Tailwind CSS (CDN for UI Polish) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #111827; }
-        .btn-primary { @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium; }
-        .input-field { @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border; }
-    </style>
-</head>
-<body class="antialiased min-h-screen flex flex-col">
-    <nav class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-            <a href="/" class="text-2xl font-bold text-blue-600 tracking-tight">ShopSense AI</a>
-            
-            <!-- Global Search Bar -->
-            <form method="get" action="{% url 'search_results' %}" class="relative w-full max-w-lg mx-8 hidden md:block">
-                <input type="text" name="q" placeholder="Search products, brands, categories..." class="w-full bg-gray-100 border border-transparent rounded-full py-2 pl-5 pr-10 text-sm focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all outline-none" value="{{ request.GET.q|default_if_none:'' }}">
-                <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </button>
-            </form>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Glassmorphism Header */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        
+        /* Dark Mode Glass */
+        .dark .glass-header {
+            background: rgba(17, 24, 39, 0.85);
+            border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+        }
 
-            <div class="flex items-center">
-                <a href="{% url 'compare_view' %}" class="text-gray-600 hover:text-blue-600 mx-3 font-semibold flex items-center gap-1 transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    Compare
-                </a>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'profile' %}" class="text-gray-600 hover:text-gray-900 mx-3">Profile</a>
-                    <form action="{% url 'logout' %}" method="post" class="inline">
-                        {% csrf_token %}
-                        <button type="submit" class="text-gray-600 hover:text-gray-900 mx-3">Logout</button>
+        /* Micro-interactions */
+        .hover-lift {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 antialiased min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Premium Sticky Header -->
+    <header class="glass-header sticky top-0 z-50 w-full transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="/" class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 tracking-tight flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-primary"></i> ShopSense
+                    </a>
+                </div>
+
+                <!-- Desktop Global Search -->
+                <div class="hidden md:flex flex-1 max-w-2xl mx-12">
+                    <form method="get" action="{% url 'search_results' %}" class="w-full relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                            <i class="fa-solid fa-search"></i>
+                        </div>
+                        <input type="text" name="q" placeholder="Search products, brands, models..." 
+                            class="w-full bg-gray-100 dark:bg-gray-800 border-none rounded-full py-3 pl-12 pr-4 text-sm focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-gray-700 transition-all shadow-inner"
+                            value="{{ request.GET.q|default_if_none:'' }}">
                     </form>
-                {% else %}
-                    <a href="{% url 'login' %}" class="text-gray-600 hover:text-gray-900 mx-3">Login</a>
-                    <a href="{% url 'register' %}" class="btn-primary">Sign Up</a>
-                {% endif %}
+                </div>
+
+                <!-- Navigation Icons -->
+                <div class="flex items-center space-x-6">
+                    <a href="{% url 'ai_chat' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition group relative">
+                        <i class="fa-solid fa-sparkles text-xl"></i>
+                        <span class="absolute -top-1 -right-2 bg-purple-100 text-purple-600 text-[10px] font-bold px-1.5 py-0.5 rounded-full">AI</span>
+                    </a>
+                    
+                    <a href="{% url 'compare_view' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition">
+                        <i class="fa-solid fa-code-compare text-xl"></i>
+                    </a>
+
+                    <a href="{% url 'wishlist_home' %}" class="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition relative">
+                        <i class="fa-regular fa-heart text-xl"></i>
+                    </a>
+
+                    <!-- User Menu -->
+                    {% if user.is_authenticated %}
+                        <div class="relative group">
+                            <button class="flex items-center gap-2 focus:outline-none">
+                                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=2563eb&color=fff" alt="User" class="w-10 h-10 rounded-full shadow-sm border-2 border-transparent group-hover:border-primary transition">
+                            </button>
+                            <!-- Dropdown -->
+                            <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right z-50">
+                                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ user.username }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ user.email }}</p>
+                                </div>
+                                <div class="py-1">
+                                    <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"><i class="fa-solid fa-chart-line w-5"></i> Dashboard</a>
+                                    <a href="{% url 'settings' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"><i class="fa-solid fa-gear w-5"></i> Settings</a>
+                                </div>
+                                <div class="border-t border-gray-100 dark:border-gray-700 py-1">
+                                    <form method="post" action="{% url 'logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"><i class="fa-solid fa-arrow-right-from-bracket w-5"></i> Sign Out</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center gap-3">
+                            <a href="{% url 'login' %}" class="text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 transition">Sign In</a>
+                            <a href="{% url 'register' %}" class="text-sm font-medium bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-5 py-2.5 rounded-full hover:shadow-lg hover:bg-gray-800 transition">Join Free</a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </nav>
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+    </header>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed top-24 right-4 z-50 flex flex-col gap-2">
         {% if messages %}
             {% for message in messages %}
-                <div class="p-4 mb-4 text-sm rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-800{% else %}bg-green-50 text-green-800{% endif %}" role="alert">
-                    {{ message }}
+                <div class="toast flex items-center p-4 rounded-xl shadow-xl max-w-sm w-full bg-white dark:bg-gray-800 border-l-4 {% if message.tags == 'success' %}border-green-500{% elif message.tags == 'error' %}border-red-500{% else %}border-blue-500{% endif %} transform transition-all duration-300 translate-x-0">
+                    <div class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {{ message }}
+                    </div>
+                    <button onclick="this.parentElement.remove()" class="ml-auto text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             {% endfor %}
         {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
         {% block content %}{% endblock %}
     </main>
-    <footer class="bg-white border-t py-6 text-center text-sm text-gray-500">
-        &copy; 2026 ShopSense AI. All rights reserved.
+
+    <!-- Premium Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 pt-16 pb-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-12">
+                <div class="lg:col-span-2">
+                    <a href="/" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 tracking-tight flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-layer-group text-primary"></i> ShopSense
+                    </a>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-xs mb-6">
+                        The ultimate AI-powered shopping intelligence platform. We track millions of products to find you the absolute best deals, instantly.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"><i class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white mb-6 uppercase tracking-wider text-xs">Product</h4>
+                    <ul class="space-y-4">
+<li><a href="{% url 'ai_chat' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">AI Assistant</a></li>
+                        <li><a href="{% url 'compare_view' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Compare Engine</a></li>
+                        <li><a href="{% url 'wishlist_home' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Wishlists</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white mb-6 uppercase tracking-wider text-xs">Company</h4>
+                    <ul class="space-y-4">
+                        <li><a href="{% url 'public_page' 'about' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">About Us</a></li>
+                        <li><a href="{% url 'contact' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Contact</a></li>
+                        <li><a href="#" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Careers</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white mb-6 uppercase tracking-wider text-xs">Legal</h4>
+                    <ul class="space-y-4">
+                        <li><a href="{% url 'public_page' 'privacy' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Privacy Policy</a></li>
+                        <li><a href="{% url 'public_page' 'terms' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Terms of Service</a></li>
+                        <li><a href="{% url 'public_page' 'affiliate' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Affiliate Disclosure</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-100 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-400 text-sm">© {% now "Y" %} ShopSense AI. All rights reserved.</p>
+                <div class="flex items-center gap-4">
+                    <form method="post" action="{% url 'newsletter_subscribe' %}" class="flex gap-2">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Subscribe to deals..." required class="text-sm px-4 py-2 bg-gray-100 dark:bg-gray-800 border-none rounded-full focus:ring-2 focus:ring-primary outline-none text-gray-900 dark:text-white">
+                        <button type="submit" class="bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-4 py-2 rounded-full text-sm font-medium hover:bg-primary dark:hover:bg-primary transition">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </footer>
+
+    <script>
+        // Auto dismiss toasts
+        setTimeout(() => {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(t => {
+                t.style.opacity = '0';
+                t.style.transform = 'translateX(100%)';
+                setTimeout(() => t.remove(), 300);
+            });
+        }, 5000);
+    </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
