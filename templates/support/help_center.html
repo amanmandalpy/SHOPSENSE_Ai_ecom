@@ -45,7 +45,7 @@
                     {% endfor %}
                 </ul>
                 {% if category.faqs.count > 3 %}
-                <a href="#" class="inline-block mt-6 text-sm font-semibold text-primary hover:text-blue-600 transition">View all {{ category.faqs.count }} articles <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                <a href="?category={{ category.slug }}" class="inline-block mt-6 text-sm font-semibold text-primary hover:text-blue-600 transition">View all {{ category.faqs.count }} articles <i class="fa-solid fa-arrow-right ml-1"></i></a>
                 {% endif %}
             </div>
             {% endfor %}

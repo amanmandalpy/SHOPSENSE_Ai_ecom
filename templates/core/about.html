@@ -1,14 +1,57 @@
 {% extends 'base.html' %}
-{% block title %}About - ShopSense AI{% endblock %}
+{% block title %}About Us - ShopSense AI{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-6">About</h1>
-    <p class="text-lg text-gray-600 dark:text-gray-400 mb-12">Learn more about our platform and why millions of shoppers trust ShopSense AI.</p>
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight">Redefining How You Shop.</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            ShopSense AI was built on a simple premise: finding the best deal shouldn't require hours of research, dozens of open tabs, and endless scrolling. 
+        </p>
+    </div>
     
-    <div class="prose prose-lg prose-blue dark:prose-invert max-w-none text-left bg-white dark:bg-gray-800 p-8 md:p-12 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm">
-        <p>This is a placeholder for the <strong>About</strong> page. In a production environment, this content would highlight the specific details of ShopSense AI's operations, technology, and team.</p>
-        <p>Our goal is to create the most transparent, AI-driven shopping experience on the internet.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Our Story</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                As avid online shoppers, we grew frustrated with the fragmentation of modern e-commerce. Prices fluctuate wildly, fake reviews run rampant, and comparing products across different retailers is a logistical nightmare. 
+            </p>
+            <p class="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                We realized that the solution wasn't another standard shopping portal—it was artificial intelligence. By combining massive real-time data feeds with an intelligent AI assistant, we created ShopSense AI to do the heavy lifting for you.
+            </p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-800/50 p-8 rounded-3xl border border-gray-100 dark:border-gray-800">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Mission</h3>
+            <ul class="space-y-4">
+                <li class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 dark:text-white">Save Time</h4>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Cut research time from hours to seconds.</p>
+                    </div>
+                </li>
+                <li class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
+                        <i class="fa-solid fa-piggy-bank"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 dark:text-white">Save Money</h4>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Always get the absolute lowest price across top retailers.</p>
+                    </div>
+                </li>
+                <li class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 dark:text-white">Shop with Confidence</h4>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Unbiased, AI-driven insights with no hidden agendas.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 {% endblock %}

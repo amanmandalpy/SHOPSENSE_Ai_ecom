@@ -1,3 +1,4 @@
+{% load currency_filters %}
 <div class="group bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden hover-lift flex flex-col relative h-full">
     <!-- Quick Actions Overlay -->
     <div class="absolute top-3 right-3 z-10 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -35,7 +36,7 @@
                     <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">{{ product.best_listing.store.name }}</span>
                 </div>
                 <div class="flex items-end gap-2">
-                    <p class="text-lg font-bold text-gray-900 dark:text-white">{{ product.best_listing.store.currency }} {{ product.best_listing.current_price }}</p>
+                    <p class="text-lg font-bold text-gray-900 dark:text-white">{{ product.best_listing.store.currency|currency_symbol }}{{ product.best_listing.current_price|inr }}</p>
                 </div>
             {% else %}
                 <p class="text-sm text-gray-400">Out of Stock</p>

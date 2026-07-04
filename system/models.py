@@ -21,9 +21,10 @@ class SiteSettings(SingletonModel):
     website_name = models.CharField(max_length=100, default='ShopSense AI')
     logo = models.ImageField(upload_to='system/', blank=True, null=True)
     favicon = models.ImageField(upload_to='system/', blank=True, null=True)
-    currency = models.CharField(max_length=10, default='USD')
-    language = models.CharField(max_length=10, default='en-US')
-    timezone = models.CharField(max_length=50, default='UTC')
+    currency = models.CharField(max_length=10, default='INR')
+    currency_symbol = models.CharField(max_length=5, default='₹')
+    language = models.CharField(max_length=10, default='en-IN')
+    timezone = models.CharField(max_length=50, default='Asia/Kolkata')
     
     # Modes
     maintenance_mode = models.BooleanField(default=False)

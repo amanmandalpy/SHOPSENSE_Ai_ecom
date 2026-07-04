@@ -1,9 +1,14 @@
 <!DOCTYPE html>
+{% load currency_filters %}
+{% load static %}
 <html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ShopSense AI - Premium Shopping Intelligence{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <!-- Tailwind CSS (CDN for UI Polish) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -156,18 +161,20 @@
                         The ultimate AI-powered shopping intelligence platform. We track millions of products to find you the absolute best deals, instantly.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="https://twitter.com/ShopSenseAI" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/ShopSenseAI" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/company/shopsense-ai" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"><i class="fa-brands fa-linkedin-in"></i></a>
                     </div>
                 </div>
 
                 <div>
                     <h4 class="font-semibold text-gray-900 dark:text-white mb-6 uppercase tracking-wider text-xs">Product</h4>
                     <ul class="space-y-4">
-<li><a href="{% url 'ai_chat' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">AI Assistant</a></li>
+<li><a href="{% url 'product_list' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">All Products</a></li>
+                        <li><a href="{% url 'ai_chat' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">AI Assistant</a></li>
                         <li><a href="{% url 'compare_view' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Compare Engine</a></li>
                         <li><a href="{% url 'wishlist_home' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Wishlists</a></li>
+                        <li><a href="{% url 'coupons_list' %}" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm transition">Coupons &amp; Deals</a></li>
                     </ul>
                 </div>
 

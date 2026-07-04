@@ -11,7 +11,7 @@ class UserPreference(models.Model):
     preferred_brands = models.ManyToManyField(Brand, blank=True)
     budget_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     budget_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    preferred_currency = models.CharField(max_length=10, default='USD')
+    preferred_currency = models.CharField(max_length=10, default='INR')
     
     def __str__(self):
         return f"{self.user}'s Preferences"

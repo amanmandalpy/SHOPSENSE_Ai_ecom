@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load currency_filters %}
 {% block title %}{{ product.name }} | ShopSense AI{% endblock %}
 
 {% block content %}
@@ -10,7 +11,7 @@
             <ol class="flex items-center space-x-2">
                 <li><a href="/" class="hover:text-primary transition">Home</a></li>
                 <li><i class="fa-solid fa-chevron-right text-[10px]"></i></li>
-                <li><a href="#" class="hover:text-primary transition">{{ product.category.name|default:"Catalog" }}</a></li>
+                <li><a href="{% if product.category %}{% url 'category_detail' product.category.slug %}{% else %}{% url 'category_list' %}{% endif %}" class="hover:text-primary transition">{{ product.category.name|default:"Catalog" }}</a></li>
                 <li><i class="fa-solid fa-chevron-right text-[10px]"></i></li>
                 <li class="text-gray-900 dark:text-gray-200 truncate max-w-[200px]">{{ product.name }}</li>
             </ol>
@@ -50,9 +51,9 @@
                             <div>
                                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Lowest Price Available</p>
                                 <div class="flex items-end gap-3">
-                                    <span class="text-4xl font-extrabold text-gray-900 dark:text-white">{{ best.store.currency }} {{ best.current_price }}</span>
+                                    <span class="text-4xl font-extrabold text-gray-900 dark:text-white">{{ best.store.currency|currency_symbol }}{{ best.current_price|inr }}</span>
                                     {% if best.highest_discount %}
-                                    <span class="text-lg text-red-500 line-through">{{ best.store.currency }} {{ best.mrp }}</span>
+                                    <span class="text-lg text-red-500 line-through">{{ best.store.currency|currency_symbol }}{{ best.mrp|inr }}</span>
                                     <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded">{{ best.highest_discount }}% OFF</span>
                                     {% endif %}
                                 </div>
@@ -60,7 +61,7 @@
                             </div>
                             
                             <div class="flex flex-col gap-3 min-w-[200px]">
-                                <a href="{% url 'affiliate_redirect' best.id %}" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-center py-4 rounded-xl shadow-lg hover-lift transition">Buy Now</a>
+                                <a href="{% url 'affiliate:outbound_redirect' best.id %}" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-center py-4 rounded-xl shadow-lg hover-lift transition">Buy Now</a>
                                 <div class="flex gap-2">
                                     <form action="{% url 'wishlist_add' product.id %}" method="post" class="flex-1">
                                         {% csrf_token %}
