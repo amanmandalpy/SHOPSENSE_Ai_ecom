@@ -10,4 +10,8 @@ urlpatterns = [
     path('stores/', include('stores.urls')),
     path('products/', include('products.urls')),
     path('merchants/', include('merchant_products.urls')),
+    path('alerts/', include('price_alerts.urls')),
+    path('notifications/', include('notifications.urls')),
+    path('search/', include('search.urls')),
+    path('compare/', include('comparison.urls')),
 ]

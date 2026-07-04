@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}My Price Alerts{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto py-12">
+    <h1 class="text-3xl font-bold mb-8">My Price Alerts</h1>
+    <div class="bg-white rounded-lg shadow border overflow-hidden">
+        {% if alerts %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Target Price</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for alert in alerts %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ alert.merchant_product.product.name }} <span class="text-gray-500 font-normal">at {{ alert.merchant_product.store.name }}</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                                {{ alert.currency }} {{ alert.target_price }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                {% if alert.status == 'ACTIVE' %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                {% elif alert.status == 'TRIGGERED' %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Triggered</span>
+                                {% else %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ alert.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                {% if alert.status == 'ACTIVE' or alert.status == 'PAUSED' %}
+                                    <form method="post" action="{% url 'toggle_alert' alert.pk %}" class="inline-block">
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                            {% if alert.status == 'ACTIVE' %}Pause{% else %}Resume{% endif %}
+                                        </button>
+                                    </form>
+                                {% endif %}
+                                <form method="post" action="{% url 'delete_alert' alert.pk %}" class="inline-block">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="p-8 text-center text-gray-500">You don't have any price alerts set up yet. Find a product you like and click "Create Alert".</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

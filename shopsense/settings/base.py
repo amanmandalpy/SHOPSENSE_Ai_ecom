@@ -41,9 +41,11 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'dashboard.apps.DashboardConfig',
     'merchant_products.apps.MerchantProductsConfig',
+    'comparison.apps.ComparisonConfig',
     'ai_assistant.apps.AiAssistantConfig',
     'api.apps.ApiConfig',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

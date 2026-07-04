@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% block title %}Search Results for "{{ query }}"{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row gap-8">
+        
+        <!-- Sidebar Filters -->
+        <aside class="w-full md:w-1/4">
+            <div class="bg-white p-6 rounded-lg shadow border sticky top-6">
+                <h3 class="text-lg font-bold mb-4">Filters</h3>
+                <form method="get" action="{% url 'search_results' %}" id="filter-form">
+                    <input type="hidden" name="q" value="{{ query }}">
+                    
+                    <!-- Sort By -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+                        <select name="sort_by" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" onchange="this.form.submit()">
+                            <option value="">Relevance</option>
+                            <option value="lowest_price" {% if sort_by == 'lowest_price' %}selected{% endif %}>Lowest Price</option>
+                            <option value="highest_price" {% if sort_by == 'highest_price' %}selected{% endif %}>Highest Price</option>
+                            <option value="highest_discount" {% if sort_by == 'highest_discount' %}selected{% endif %}>Highest Discount</option>
+                            <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest</option>
+                            <option value="a_z" {% if sort_by == 'a_z' %}selected{% endif %}>A - Z</option>
+                            <option value="z_a" {% if sort_by == 'z_a' %}selected{% endif %}>Z - A</option>
+                        </select>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <select name="category" class="w-full border-gray-300 rounded-md shadow-sm" onchange="this.form.submit()">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.slug }}" {% if active_category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Brands -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                        <select name="brand" class="w-full border-gray-300 rounded-md shadow-sm" onchange="this.form.submit()">
+                            <option value="">All Brands</option>
+                            {% for brand in brands %}
+                                <option value="{{ brand.slug }}" {% if active_brand == brand.slug %}selected{% endif %}>{{ brand.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Stores -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Merchant Store</label>
+                        <select name="store" class="w-full border-gray-300 rounded-md shadow-sm" onchange="this.form.submit()">
+                            <option value="">All Stores</option>
+                            {% for s in stores %}
+                                <option value="{{ s.slug }}" {% if active_store == s.slug %}selected{% endif %}>{{ s.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" name="min_price" value="{{ min_price }}" placeholder="Min" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            <span class="text-gray-400">-</span>
+                            <input type="number" name="max_price" value="{{ max_price }}" placeholder="Max" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full btn-primary py-2 text-sm font-bold">Apply Filters</button>
+                    <a href="{% url 'search_results' %}?q={{ query }}" class="block text-center mt-3 text-sm text-gray-500 hover:text-gray-900 transition">Clear All Filters</a>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Product Grid -->
+        <main class="w-full md:w-3/4">
+            <h2 class="text-2xl font-bold mb-6">
+                {% if query %}
+                    Results for "<span class="text-blue-600">{{ query }}</span>"
+                {% else %}
+                    All Products
+                {% endif %}
+                <span class="text-sm font-normal text-gray-500 ml-2">({{ page_obj.paginator.count }} found)</span>
+            </h2>
+
+            {% if products %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for product in products %}
+                        <div class="bg-white rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col border border-gray-100 group relative">
+                            <a href="{{ product.get_absolute_url }}" class="block p-4 bg-gray-50 flex items-center justify-center h-48">
+                                {% if product.gallery_images.first %}
+                                    <img src="{{ product.gallery_images.first.image.url }}" alt="{{ product.name }}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
+                                {% else %}
+                                    <span class="text-gray-400 font-medium">No Image</span>
+                                {% endif %}
+                            </a>
+                            <div class="p-4 flex flex-col flex-grow">
+                                <div class="text-xs text-gray-500 mb-2 flex justify-between uppercase tracking-wider font-semibold">
+                                    <span>{{ product.brand.name }}</span>
+                                </div>
+                                <a href="{{ product.get_absolute_url }}" class="font-bold text-gray-900 hover:text-blue-600 text-lg leading-tight block mb-3 line-clamp-2">{{ product.name }}</a>
+                                
+                                <div class="mt-auto pt-4 border-t border-gray-100">
+                                    {% if product.merchant_listings.exists %}
+                                        {% with best=product.merchant_listings.first %}
+                                            <div class="flex justify-between items-end">
+                                                <div>
+                                                    <span class="text-xl font-bold text-gray-900">{{ best.currency }} {{ best.current_price }}</span>
+                                                    {% if best.original_price and best.discount_percentage > 0 %}
+                                                        <span class="text-xs text-gray-400 line-through block">{{ best.currency }} {{ best.original_price }} ({{ best.discount_percentage|floatformat:0 }}% OFF)</span>
+                                                    {% endif %}
+                                                </div>
+                                                <span class="text-xs font-bold text-green-700 bg-green-50 px-2.5 py-1 rounded-full border border-green-100">{{ best.store.name }}</span>
+                                            </div>
+                                            {% if product.merchant_listings.count > 1 %}
+                                                <div class="text-xs text-blue-600 mt-3 font-medium flex items-center gap-1">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Compare {{ product.merchant_listings.count }} stores
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% else %}
+                                        <span class="text-sm text-red-500 font-medium bg-red-50 px-3 py-1 rounded-full inline-block">Currently Unavailable</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between">
+                                    <form method="post" action="{% url 'add_to_compare' product.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-xs font-bold text-gray-500 hover:text-blue-600 transition flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Add to Compare
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <div class="mt-12 flex justify-center">
+                    <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        {% if page_obj.has_previous %}
+                            <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">Previous</a>
+                        {% endif %}
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                        {% if page_obj.has_next %}
+                            <a href="?q={{ query }}&page={{ page_obj.next_page_number }}" class="relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">Next</a>
+                        {% endif %}
+                    </nav>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-20 bg-white rounded-xl border shadow-sm">
+                    <div class="text-5xl mb-4">🔍</div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">No exact matches found</h3>
+                    <p class="text-gray-500 mb-8 max-w-md mx-auto">We couldn't find anything matching your criteria. Try adjusting your filters or using different keywords.</p>
+                </div>
+                
+                {% if trending_products %}
+                    <h3 class="text-xl font-bold mb-6 mt-16 text-gray-900 border-b pb-2">Trending Right Now</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {% for product in trending_products %}
+                            <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100 flex flex-col">
+                                <a href="{{ product.get_absolute_url }}" class="block p-4 h-32 bg-gray-50 flex justify-center items-center">
+                                    <span class="font-bold text-gray-400 text-sm">Product Image</span>
+                                </a>
+                                <div class="p-4 text-center">
+                                     <a href="{{ product.get_absolute_url }}" class="font-bold text-gray-800 text-sm hover:text-blue-600 line-clamp-2">{{ product.name }}</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endif %}
+        </main>
+    </div>
+</div>
+{% endblock %}

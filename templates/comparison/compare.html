@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}Product Comparison{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Compare Products</h1>
+        {% if products %}
+            <form method="post" action="{% url 'clear_compare' %}">
+                {% csrf_token %}
+                <button type="submit" class="text-sm text-red-600 hover:text-red-800 font-medium bg-red-50 px-4 py-2 rounded-lg border border-red-100 transition">Clear All</button>
+            </form>
+        {% endif %}
+    </div>
+
+    {% if products %}
+        <div class="bg-white border rounded-xl shadow-sm overflow-hidden mb-8">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead class="bg-gray-50 border-b relative">
+                        <tr>
+                            <th class="p-6 w-1/5 min-w-[200px] border-r align-top sticky top-0 bg-gray-50 z-10">
+                                <h3 class="text-lg font-bold text-gray-900 mb-2">Comparison Overview</h3>
+                                <p class="text-sm text-gray-500 font-normal">Review specifications side-by-side to make the best choice.</p>
+                                
+                                {% if products|length < 4 %}
+                                    <div class="mt-8 p-4 border border-dashed border-gray-300 rounded-lg text-center bg-white">
+                                        <span class="block text-sm text-gray-500 mb-2">You can compare up to 4 items.</span>
+                                        <a href="{% url 'search_results' %}" class="text-sm text-blue-600 font-bold hover:underline">+ Add Product</a>
+                                    </div>
+                                {% endif %}
+                            </th>
+                            
+                            {% for product in products %}
+                            <th class="p-6 w-1/5 min-w-[250px] border-r align-top relative bg-white transition-colors group">
+                                <form method="post" action="{% url 'remove_from_compare' product.pk %}" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-600 rounded-full w-8 h-8 flex items-center justify-center" title="Remove">✕</button>
+                                </form>
+
+                                <div class="flex flex-col h-full">
+                                    <a href="{{ product.get_absolute_url }}" class="block h-32 flex items-center justify-center mb-4">
+                                        {% if product.gallery_images.first %}
+                                            <img src="{{ product.gallery_images.first.image.url }}" alt="{{ product.name }}" class="max-h-full max-w-full object-contain">
+                                        {% else %}
+                                            <span class="text-gray-400 font-medium">No Image</span>
+                                        {% endif %}
+                                    </a>
+                                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{{ product.brand.name }}</span>
+                                    <a href="{{ product.get_absolute_url }}" class="text-base font-bold text-gray-900 hover:text-blue-600 line-clamp-2 mb-4 flex-grow">{{ product.name }}</a>
+                                    
+                                    {% if product.merchant_listings.exists %}
+                                        {% with best=product.merchant_listings.first %}
+                                            <div class="mt-auto">
+                                                <div class="flex items-center gap-2 mb-2">
+                                                    <span class="text-2xl font-black text-gray-900">{{ best.currency }} {{ best.current_price }}</span>
+                                                    {% if best.original_price and best.discount_percentage > 0 %}
+                                                        <span class="text-xs text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded">-{{ best.discount_percentage|floatformat:0 }}%</span>
+                                                    {% endif %}
+                                                </div>
+                                                
+                                                {% if best.current_price == highlights.lowest_price %}
+                                                    <div class="inline-block bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded border border-yellow-200 mb-2">🏆 Lowest Price</div>
+                                                {% endif %}
+                                                
+                                                <a href="{{ best.get_absolute_url }}" class="block text-center btn-primary w-full py-2 text-sm mt-2">Buy from {{ best.store.name }}</a>
+                                            </div>
+                                        {% endwith %}
+                                    {% else %}
+                                        <div class="mt-auto pt-4 border-t border-gray-100">
+                                            <span class="text-sm text-red-500 font-bold">Currently Unavailable</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </th>
+                            {% endfor %}
+                            
+                            <!-- Fill empty slots -->
+                            {% if products|length < 4 %}
+                                {% for i in "x"|rjust:4 %}
+                                    {% if forloop.counter > products|length %}
+                                        <th class="p-6 w-1/5 min-w-[250px] border-r bg-gray-50"></th>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        <!-- Dynamic Specification Matrix -->
+                        {% for spec_name, values in specifications.items %}
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="p-4 border-r bg-gray-50 font-semibold text-gray-700 text-sm">
+                                    {{ spec_name }}
+                                </td>
+                                
+                                {% for val in values %}
+                                    <td class="p-4 border-r text-gray-800 text-sm {% if val == '-' %}text-gray-400{% endif %}">
+                                        {{ val }}
+                                    </td>
+                                {% endfor %}
+                                
+                                {% if products|length < 4 %}
+                                    {% for i in "x"|rjust:4 %}
+                                        {% if forloop.counter > products|length %}
+                                            <td class="p-4 border-r bg-gray-50"></td>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-20 bg-white rounded-xl border shadow-sm">
+            <div class="text-6xl mb-6">⚖️</div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Your comparison list is empty</h3>
+            <p class="text-gray-500 mb-8 max-w-md mx-auto">Add products to compare their prices, specifications, and features side-by-side.</p>
+            <a href="{% url 'search_results' %}" class="btn-primary inline-block px-8 py-3 text-lg">Browse Products</a>
+        </div>
+        
+        {% if trending_products %}
+            <div class="mt-16">
+                <h3 class="text-xl font-bold mb-6 text-gray-900 border-b pb-2">Try comparing these</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {% for product in trending_products %}
+                        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100 p-4 text-center">
+                            <span class="block font-bold text-gray-900 mb-2 truncate">{{ product.name }}</span>
+                            <form method="post" action="{% url 'add_to_compare' product.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="text-blue-600 hover:text-blue-800 text-sm font-bold w-full p-2 bg-blue-50 rounded mt-2">Add to Compare</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

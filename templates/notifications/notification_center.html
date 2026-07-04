@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Notification Center{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-12">
+    <h1 class="text-3xl font-bold mb-8">Notification Center</h1>
+    <div class="bg-white rounded-lg shadow border overflow-hidden">
+        {% if notifications %}
+            <ul class="divide-y divide-gray-200">
+            {% for notif in notifications %}
+                <li class="p-6 transition hover:bg-gray-50 {% if not notif.is_read %}bg-blue-50{% endif %}">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900 mb-1">{{ notif.title }}</h4>
+                            <p class="text-gray-600 mb-2">{{ notif.message }}</p>
+                            <span class="text-xs text-gray-500">{{ notif.created_at|date:"M d, Y h:i A" }}</span>
+                        </div>
+                        {% if not notif.is_read %}
+                            <a href="{% url 'mark_notification_read' notif.pk %}" class="btn-primary text-sm px-4 py-2">Mark Read & View</a>
+                        {% else %}
+                            {% if notif.action_url %}
+                                <a href="{{ notif.action_url }}" class="text-blue-600 hover:underline text-sm font-medium">View Again</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <div class="p-8 text-center text-gray-500">You have no notifications yet.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
